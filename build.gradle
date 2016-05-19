@@ -1,0 +1,49 @@
+group 'VSDTAnalysis'
+version '1.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.5
+
+//jar {
+//    manifest {
+//        attributes 'Main-Class': 'trendmicro.coc.App'
+//
+//    }
+//}
+
+task copyToLib( type: Copy ) {
+    into "$buildDir/libs/lib"
+    from configurations.runtime
+}
+
+jar {
+    baseName = 'VSDTAnalysis'
+    from('src/main/java') {
+        include 'config/**/*.properties'
+    }
+
+    dependsOn copyToLib
+
+    manifest {
+        attributes 'Implementation-Title': 'Analytics Library',
+                'Implementation-Version': version,
+                'Main-Class': 'trendmicro.coc.App'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'com.jcraft:jsch:0.1.44-1'
+
+}
+
